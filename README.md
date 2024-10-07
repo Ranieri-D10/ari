@@ -8,7 +8,7 @@ O projeto ARI tem como objetivo facilitar o agendamento e controle da administra
 - **Express**: Framework web para construção das rotas e API REST.
 - **Prisma**: ORM para interação com o banco de dados.
 - **Swagger**: Utilizado para documentar a API.
-- **PostgreSQL**: Banco de dados relacional.
+- **MySQL**: Banco de dados relacional.
 
 ## Estrutura do Projeto
 
