@@ -1,5 +1,6 @@
 const express = require('express');
 const UsuarioController = require('../controllers/usuarioController');
+const { autenticarToken } = require('../controllers/usuarioController');
 
 const router = express.Router();
 
@@ -33,5 +34,14 @@ const router = express.Router();
  *         description: Falha ao criar o usuário.
  */
 router.post('/', UsuarioController.criarUsuario);
+
+// Protegido por autenticação
+router.get('/', autenticarToken, UsuarioController.listarUsuarios);
+
+// Protegido por autenticação
+router.put('/:id', autenticarToken, UsuarioController.atualizarUsuario);
+
+// Rota de login (sem autenticação)
+router.post('/login', UsuarioController.login);
 
 module.exports = router;

@@ -13,6 +13,7 @@ model Usuario {
   senha         String
   dt_nascimento DateTime
   status        Boolean
+  email         String   @unique
   prescricoes   Prescricao[]  // Relacionamento com Prescricao
 }
 

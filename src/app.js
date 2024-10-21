@@ -1,6 +1,8 @@
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocs = require('./config/swagger');
+const env = require('dotenv').config();
+
 
 // Inicializa o app Express
 const app = express();
