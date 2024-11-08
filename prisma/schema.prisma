@@ -21,6 +21,7 @@ model Prescricao {
   id          Int          @id @default(autoincrement())
   id_usuario  Int
   id_remedio  Int
+  
   observacao  String?
   frequencia  DateTime
   dt_inicio   DateTime

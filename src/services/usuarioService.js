@@ -3,16 +3,18 @@ const prisma = new PrismaClient();
 
 class UsuarioService {
   async criarUsuario(dadosUsuario) {
-    const { nome, email, senha, dt_nascimento, status } = dadosUsuario;
-    if (!nome || !senha || ! email) {
+    const { nome, email, senha, dt_nascimento, status = true } = dadosUsuario;
+    if (!nome || !senha || !email) {
       throw new Error('Nome, senha e email são obrigatórios');
     }
     const novoUsuario = await prisma.usuario.create({
-      data: { nome,
-        email, 
-        senha, 
+      data: {
+        nome,
+        email,
+        senha,
         dt_nascimento: new Date(dt_nascimento),
-        status, },
+        status,
+      },
     });
     return novoUsuario;
   }
@@ -38,7 +40,7 @@ class UsuarioService {
       }
     });
   }
-  
+
 }
 
 module.exports = new UsuarioService();
