@@ -18,6 +18,10 @@
         <label>Data de Nascimento:</label>
         <input type="date" v-model="formData.dt_nascimento" required />
       </div>
+      <div>
+        <label>Status:</label>
+        <input type="checkbox" v-model="formData.status" /> <!-- Checkbox para status -->
+      </div>
       <button type="submit">Registrar</button>
     </form>
     <p v-if="errorMessage">{{ errorMessage }}</p>
@@ -32,18 +36,21 @@ const formData = ref({
   nome: '',
   email: '',
   senha: '',
-  dt_nascimento: ''
+  dt_nascimento: '',
+  status: true
 });
 
 const errorMessage = ref('');
 
 const register = async () => {
   try {
+    formData.value.dt_nascimento = new Date(formData.value.dt_nascimento).toISOString();
     const response = await axios.post('http://localhost:3000/usuarios', formData.value);
     console.log('Usuário registrado:', response.data);
-  } catch (error: any) {
+  } catch (error: any) { // define como any
     errorMessage.value = error.response?.data?.message || 'Erro no registro';
     console.error('Erro:', error);
+    console.log(error)
   }
 };
 </script>
