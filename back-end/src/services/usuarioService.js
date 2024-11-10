@@ -31,16 +31,21 @@ class UsuarioService {
   }
 
   async buscarPorEmailOuNome(email, nome) {
+    if (!email && !nome) {
+      throw new Error('Email ou nome devem ser fornecidos para buscar o usuário.');
+    }
+
+    console.log("Buscando usuário com:", email, nome); // Log para depuração
+
     return prisma.usuario.findFirst({
       where: {
         OR: [
-          { email: email || undefined },  // Se email for fornecido
-          { nome: nome || undefined }     // Se nome for fornecido
-        ]
+          email ? { email } : null,
+          nome ? { nome } : null
+        ].filter(Boolean) // Remove entradas nulas
       }
     });
   }
-
 }
 
 module.exports = new UsuarioService();

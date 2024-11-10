@@ -14,7 +14,7 @@ const router = express.Router();
  *       content:
  *         application/json:
  *           schema:
- *             type: object
+ *             type: object 
  *             properties:
  *               nome:
  *                 type: string

@@ -1,56 +1,91 @@
 <template>
-  <div>
-    <h1>Registro</h1>
-    <form @submit.prevent="register">
+  <div class="register-user">
+    <h2>Registrar Usuário</h2>
+    <form @submit.prevent="registerUser">
       <div>
-        <label>Nome:</label>
-        <input type="text" v-model="formData.nome" required />
+        <label for="name">Nome:</label>
+        <input v-model="formData.nome" id="name" required />
       </div>
       <div>
-        <label>Email:</label>
-        <input type="email" v-model="formData.email" required />
+        <label for="email">Email:</label>
+        <input v-model="formData.email" type="email" id="email" required />
       </div>
       <div>
-        <label>Senha:</label>
-        <input type="password" v-model="formData.senha" required />
+        <label for="password">Senha:</label>
+        <input v-model="formData.senha" type="password" id="password" required />
       </div>
       <div>
-        <label>Data de Nascimento:</label>
-        <input type="date" v-model="formData.dt_nascimento" required />
+        <label for="dt_nascimento">Data de Nascimento:</label>
+        <input v-model="formData.dt_nascimento" type="date" id="dt_nascimento" required />
       </div>
       <div>
-        <label>Status:</label>
-        <input type="checkbox" v-model="formData.status" /> <!-- Checkbox para status -->
+        <label for="status">Ativo:</label>
+        <input v-model="formData.status" type="checkbox" id="status" />
       </div>
       <button type="submit">Registrar</button>
     </form>
-    <p v-if="errorMessage">{{ errorMessage }}</p>
+    <p v-if="message">{{ message }}</p>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue';
+<script>
 import axios from 'axios';
 
-const formData = ref({
-  nome: '',
-  email: '',
-  senha: '',
-  dt_nascimento: '',
-  status: true
-});
-
-const errorMessage = ref('');
-
-const register = async () => {
-  try {
-    formData.value.dt_nascimento = new Date(formData.value.dt_nascimento).toISOString();
-    const response = await axios.post('http://localhost:3000/usuarios', formData.value);
-    console.log('Usuário registrado:', response.data);
-  } catch (error: any) { // define como any
-    errorMessage.value = error.response?.data?.message || 'Erro no registro';
-    console.error('Erro:', error);
-    console.log(error)
-  }
+export default {
+  data() {
+    return {
+      formData: {
+        nome: '',
+        email: '',
+        senha: '',
+        dt_nascimento: '',
+        status: false,
+      },
+      message: '',
+    };
+  },
+  methods: {
+    async registerUser() {
+      try {
+        // Ensure date is sent in ISO format
+        const payload = {
+          ...this.formData,
+          dt_nascimento: new Date(this.formData.dt_nascimento).toISOString(),
+        };
+        const response = await axios.post('http://localhost:3000/api/usuarios', payload);
+        this.message = 'Usuário registrado com sucesso!';
+      } catch (error) {
+        this.message = 'Erro ao registrar usuário: ' + error.response?.data?.message || error.message;
+      }
+    },
+  },
 };
 </script>
+
+<style scoped>
+.register-user {
+  max-width: 400px;
+  margin: auto;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+div {
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+</style>

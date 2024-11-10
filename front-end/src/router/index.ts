@@ -1,6 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Login from '../components/Login.vue'
-import Register from '../components/Register.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import Login from '../components/Login.vue';
+import Register from '../components/Register.vue';
+import Home from '../components/Home.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,8 +15,33 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: Register,
-    }
+    },
+    {
+      path: '/home',
+      name: 'home',
+      component: Home,
+      meta: { requiresAuth: true }, // Rota protegida
+    },
+    {
+      path: '/',
+      redirect: '/login', // Redireciona para login por padrão
+    },
   ],
-})
+});
 
-export default router
+// Middleware global para proteção de rotas
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token'); // Verifica se o token está presente
+
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!token) {
+      next('/login'); // Redireciona para login se não autenticado
+    } else {
+      next(); // Prossegue para rota protegida
+    }
+  } else {
+    next(); // Prossegue para rotas públicas
+  }
+});
+
+export default router;
