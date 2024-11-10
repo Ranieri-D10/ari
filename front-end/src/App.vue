@@ -1,28 +1,62 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { ref, computed, watch } from 'vue';
+import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router';
+import Menu from './components/Menu.vue';
+
+const router = useRouter();
+const route = useRoute();
+
+// Verifica se o usuário está autenticado pelo token
+const isAuthenticated = ref(localStorage.getItem('token') !== null);
+
+// Computed para verificar se a rota atual é "home"
+const isHome = computed(() => route.name === 'home');
+
+// Observa mudanças na rota para garantir que a autenticação esteja atualizada
+watch(route, () => {
+  isAuthenticated.value = localStorage.getItem('token') !== null;
+});
+
+// Redireciona para /login se o usuário tentar acessar /home sem estar autenticado
+if (isHome.value && !isAuthenticated.value) {
+  router.push('/login');
+}
 </script>
 
 <template>
-  <header>
+  <!-- Exibe o header de navegação apenas para rotas de login e registro -->
+  <header v-if="!isAuthenticated">
     <nav>
       <RouterLink to="/login">Login</RouterLink>
       <RouterLink to="/register">Register</RouterLink>
-      <RouterLink to="/home">Home</RouterLink>
     </nav>
   </header>
 
-  <RouterView />
+  <!-- Exibe o Menu apenas se o usuário estiver autenticado e na rota home -->
+  <Menu v-if="isAuthenticated && isHome" />
+
+  <!-- Renderiza o conteúdo principal da aplicação -->
+  <div :class="{ 'full-screen': isHome && isAuthenticated }">
+    <RouterView />
+  </div>
 </template>
 
 <style scoped>
+/* Define o layout para tela cheia na rota home */
+.full-screen {
+  width: 100%;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilos do header de navegação */
 header {
   line-height: 1.5;
   max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
 }
 
 nav {
@@ -57,21 +91,10 @@ nav a:first-of-type {
     padding-right: calc(var(--section-gap) / 2);
   }
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
   nav {
     text-align: left;
     margin-left: -1rem;
     font-size: 1rem;
-
     padding: 1rem 0;
     margin-top: 1rem;
   }

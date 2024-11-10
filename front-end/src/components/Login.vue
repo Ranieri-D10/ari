@@ -41,6 +41,9 @@ export default {
         // Armazenar o token JWT no localStorage
         localStorage.setItem('token', response.data.token);
         this.message = 'Login realizado com sucesso!';
+
+        // Redireciona para a página Home após login
+        this.$router.push('/home');
       } catch (error) {
         this.message = 'Erro ao fazer login: ' + (error.response?.data?.message || error.message);
       }
