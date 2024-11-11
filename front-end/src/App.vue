@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router';
-import Menu from './components/Menu.vue';
+import NavBar from './components/NavBar.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -24,18 +24,18 @@ if (isHome.value && !isAuthenticated.value) {
 </script>
 
 <template>
-  <!-- Exibe o header de navegação apenas para rotas de login e registro -->
-  <header v-if="!isAuthenticated">
+  <!-- Exibe o NavBar apenas para usuários autenticados -->
+  <NavBar v-if="isAuthenticated" />
+
+  <!-- Exibe o header de navegação para rotas de login e registro apenas se o usuário não estiver autenticado -->
+  <header v-else>
     <nav>
       <RouterLink to="/login">Login</RouterLink>
       <RouterLink to="/register">Register</RouterLink>
     </nav>
   </header>
 
-  <!-- Exibe o Menu apenas se o usuário estiver autenticado e na rota home -->
-  <Menu v-if="isAuthenticated && isHome" />
-
-  <!-- Renderiza o conteúdo principal da aplicação -->
+  <!-- Renderiza o conteúdo principal da aplicação com layout em tela cheia apenas na home -->
   <div :class="{ 'full-screen': isHome && isAuthenticated }">
     <RouterView />
   </div>

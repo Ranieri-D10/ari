@@ -9,6 +9,15 @@ const routes: Array<RouteRecordRaw> = [
     path: '/login',
     name: 'login',
     component: Login,
+    // Evita que usuários autenticados acessem a página de login novamente
+    beforeEnter: (to, from, next) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        next('/home'); // Redireciona para Home se o usuário já estiver autenticado
+      } else {
+        next(); // Prossegue para o login se não autenticado
+      }
+    },
   },
   {
     path: '/register',
@@ -19,7 +28,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/home',
     name: 'home',
     component: Home,
-    meta: { requiresAuth: true }, // Rota protegida
+    meta: { requiresAuth: true }, // Indica que a rota é protegida
   },
   {
     path: '/',
