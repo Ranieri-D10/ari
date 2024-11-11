@@ -8,7 +8,12 @@ class RemedioService {
       throw new Error('Nome e função do remédio são obrigatórios');
     }
     const novoRemedio = await prisma.remedio.create({
-      data: { nome, funcao, dosagem, status },
+      data: {
+        nome,
+        funcao,
+        dosagem: parseFloat(dosagem), // Converter dosagem para float
+        status
+      },
     });
     return novoRemedio;
   }
@@ -18,9 +23,18 @@ class RemedioService {
   }
 
   async atualizarRemedio(id, dadosAtualizados) {
+    if (dadosAtualizados.dosagem) {
+      dadosAtualizados.dosagem = parseFloat(dadosAtualizados.dosagem); // Converter dosagem para float
+    }
     return await prisma.remedio.update({
       where: { id: Number(id) },
       data: dadosAtualizados,
+    });
+  }
+
+  async deletarRemedio(id) {
+    return await prisma.remedio.delete({
+      where: { id: Number(id) },
     });
   }
 }

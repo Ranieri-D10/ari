@@ -4,7 +4,7 @@
     <form @submit.prevent="registerUser">
       <div class="form-group">
         <label for="name">Nome:</label>
-        <input v-model="formData.nome" id="name" required />
+        <input v-model="formData.nome" id="name" type="text" required />
       </div>
       <div class="form-group">
         <label for="email">Email:</label>
@@ -18,11 +18,14 @@
         <label for="dt_nascimento">Data de Nascimento:</label>
         <input v-model="formData.dt_nascimento" type="date" id="dt_nascimento" required />
       </div>
-      <div class="form-group">
+      <div class="form-group inline-group">
         <label for="status">Ativo:</label>
         <input v-model="formData.status" type="checkbox" id="status" />
       </div>
-      <button type="submit" class="register-button">Registrar</button>
+      <div class="button-group">
+        <button type="submit" class="register-button">Registrar</button>
+        <button type="button" class="login-button" @click="navigateToLogin">Login</button>
+      </div>
     </form>
     <p v-if="message" class="message">{{ message }}</p>
   </div>
@@ -55,8 +58,11 @@ export default {
         const response = await axios.post('http://localhost:3000/api/usuarios', payload);
         this.message = 'Usuário registrado com sucesso!';
       } catch (error) {
-        this.message = 'Erro ao registrar usuário: ' + error.response?.data?.message || error.message;
+        this.message = 'Erro ao registrar usuário: ' + (error.response?.data?.message || error.message);
       }
+    },
+    navigateToLogin() {
+      this.$router.push('/login');
     },
   },
 };
@@ -64,7 +70,7 @@ export default {
 
 <style scoped>
 .register-user {
-  max-width: 400px;
+  width: 45%;
   margin: auto;
   padding: 2rem;
   background-color: #f9f9f9;
@@ -88,7 +94,10 @@ label {
   color: #333;
 }
 
-input {
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"] {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
@@ -96,8 +105,25 @@ input {
   box-sizing: border-box;
 }
 
-.register-button {
-  width: 100%;
+.inline-group {
+  display: flex;
+  align-items: center;
+}
+
+.inline-group input[type="checkbox"] {
+  width: auto;
+  margin-right: 5px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.register-button,
+.login-button {
+  width: 48%;
   padding: 10px;
   background-color: #007f4d;
   color: white;
@@ -108,7 +134,8 @@ input {
   transition: background-color 0.3s;
 }
 
-.register-button:hover {
+.register-button:hover,
+.login-button:hover {
   background-color: #005934;
 }
 

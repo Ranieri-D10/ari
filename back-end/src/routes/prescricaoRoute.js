@@ -34,4 +34,23 @@ router.post('/', PrescricaoController.criarPrescricao);
  */
 router.get('/:id_usuario', PrescricaoController.listarPrescricoes);
 
+/**
+ * @swagger
+ * /prescricoes/{id}:
+ *   delete:
+ *     summary: Deleta uma prescrição existente
+ *     description: Remove uma prescrição do sistema pelo ID.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID da prescrição a ser deletada.
+ *     responses:
+ *       204:
+ *         description: Prescrição deletada com sucesso.
+ *       400:
+ *         description: Erro ao deletar prescrição.
+ */
+router.delete('/:id', PrescricaoController.deletarPrescricao);
+
 module.exports = router;

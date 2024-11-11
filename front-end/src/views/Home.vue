@@ -1,75 +1,51 @@
 <template>
-    <v-container class="d-flex flex-column align-center justify-center fill-height pa-4">
+    <div class="home">
         <!-- Header centralizado com estilo moderno -->
-        <v-card elevation="3" class="mb-6 text-center" color="primary" dark>
-            <v-card-title>
-                <h1 class="text-h3 white--text">Bem-vindo à Agenda de Remédios</h1>
-            </v-card-title>
-        </v-card>
+        <header class="header">
+            <h1>Bem-vindo à Agenda de Remédios</h1>
+            <p>Gerencie suas prescrições, remédios e agendamentos de forma fácil e rápida.</p>
+        </header>
 
         <!-- Seções de CRUD em cards centralizados -->
-        <v-row dense justify="center">
+        <section class="crud-sections">
             <!-- Prescrições -->
-            <v-col cols="12" md="6" lg="4">
-                <v-card outlined elevation="2" class="mb-4">
-                    <v-card-title class="text-h6 font-weight-bold">
-                        Prescrições
-                    </v-card-title>
-                    <v-card-text>
-                        Gerencie suas prescrições.
-                        <PrescricaoCrud />
-                    </v-card-text>
-                    <v-card-actions>
-                        <v-btn color="success" dark block @click="newPrescription">
-                            Nova Prescrição
-                        </v-btn>
-                    </v-card-actions>
-                </v-card>
-            </v-col>
+            <div class="card">
+                <h2>Prescrições</h2>
+                <p>Gerencie suas prescrições.</p>
+                <PrescricaoCrud />
+                <button class="action-button" @click="navigateTo('prescricoes')">Nova Prescrição</button>
+            </div>
 
             <!-- Remédios -->
-            <v-col cols="12" md="6" lg="4">
-                <v-card outlined elevation="2" class="mb-4">
-                    <v-card-title class="text-h6 font-weight-bold">
-                        Remédios
-                    </v-card-title>
-                    <v-card-text>
-                        Gerencie seus remédios.
-                        <RemedioCrud />
-                    </v-card-text>
-                    <v-card-actions>
-                        <v-btn color="info" dark block @click="newMedicine">
-                            Novo Remédio
-                        </v-btn>
-                    </v-card-actions>
-                </v-card>
-            </v-col>
+            <div class="card">
+                <h2>Remédios</h2>
+                <p>Gerencie seus remédios.</p>
+                <RemedioCrud />
+                <button class="action-button" @click="navigateTo('remedios')">Novo Remédio</button>
+            </div>
 
             <!-- Histórico de Prescrições -->
-            <v-col cols="12" md="8">
-                <v-card outlined elevation="2" class="mb-4">
-                    <v-card-title class="text-h6 font-weight-bold">
-                        Histórico de Prescrições
-                    </v-card-title>
-                    <v-card-text>
-                        Acompanhe seu histórico.
-                        <HistoricoCrud />
-                    </v-card-text>
-                    <v-card-actions>
-                        <v-btn color="primary" dark block @click="newHistory">
-                            Novo Registro de Histórico
-                        </v-btn>
-                    </v-card-actions>
-                </v-card>
-            </v-col>
-        </v-row>
-    </v-container>
+            <div class="card">
+                <h2>Histórico de Prescrições</h2>
+                <p>Acompanhe seu histórico.</p>
+                <HistoricoCrud />
+                <button class="action-button" @click="navigateTo('historico')">Novo Registro de Histórico</button>
+            </div>
+
+            <!-- Agendamentos -->
+            <div class="card">
+                <h2>Agendamentos</h2>
+                <p>Agende suas consultas e lembretes de medicação.</p>
+                <button class="action-button" @click="navigateTo('agendamentos')">Novo Agendamento</button>
+            </div>
+        </section>
+    </div>
 </template>
 
 <script>
-import PrescricaoCrud from "@/views/PrescricaoCrud.vue";
-import RemedioCrud from "@/views/RemedioCrud.vue";
-import HistoricoCrud from "@/views/HistoricoCrud.vue";
+import PrescricaoCrud from "@/views/crud/PrescricaoCrud.vue";
+import RemedioCrud from "@/views/crud/RemedioCrud.vue";
+import HistoricoCrud from "@/views/crud/HistoricoCrud.vue";
 
 export default {
     components: {
@@ -78,32 +54,64 @@ export default {
         HistoricoCrud,
     },
     methods: {
-        newPrescription() {
-            console.log("Nova Prescrição criada");
-        },
-        newMedicine() {
-            console.log("Novo Remédio adicionado");
-        },
-        newHistory() {
-            console.log("Novo Histórico registrado");
+        navigateTo(view) {
+            this.$router.push(`/${view}`);
         },
     },
 };
 </script>
 
 <style scoped>
-/* Estilo moderno e centralizado */
-.fill-height {
-    min-height: 100vh;
+.home {
+    max-width: 1200px;
+    margin: auto;
+    padding: 2rem;
     background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.v-card {
-    border-radius: 16px;
-}
-
-.v-card-title {
+.header {
     text-align: center;
-    color: #424242;
+    color: #007f4d;
+    margin-bottom: 2rem;
+}
+
+.crud-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.card {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.card h2 {
+    color: #007f4d;
+}
+
+.card p {
+    margin: 1rem 0;
+}
+
+.action-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007f4d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.action-button:hover {
+    background-color: #005934;
 }
 </style>

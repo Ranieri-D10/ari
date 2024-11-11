@@ -1,5 +1,3 @@
-const PrescricaoService = require('../services/prescricaoService');
-
 class PrescricaoController {
   async criarPrescricao(req, res) {
     try {
@@ -23,6 +21,15 @@ class PrescricaoController {
     try {
       const prescricaoAtualizada = await PrescricaoService.atualizarPrescricao(req.params.id, req.body);
       res.status(200).json(prescricaoAtualizada);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async deletarPrescricao(req, res) {
+    try {
+      await PrescricaoService.deletarPrescricao(req.params.id);
+      res.status(204).send(); // No Content
     } catch (error) {
       res.status(400).json({ error: error.message });
     }

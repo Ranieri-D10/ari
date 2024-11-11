@@ -35,6 +35,13 @@ class PrescricaoService {
       data: dadosAtualizados,
     });
   }
+
+  async deletarPrescricao(id) {
+    return await prisma.prescricao.delete({
+      where: { id: Number(id) },
+    });
+  }
 }
+
 
 module.exports = new PrescricaoService();
