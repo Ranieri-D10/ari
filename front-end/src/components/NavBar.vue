@@ -1,9 +1,7 @@
 <template>
     <nav class="navbar">
-        <ul>
-            <li><router-link to="/home">Home</router-link></li>
-            <li><button @click="logout">Logout</button></li>
-        </ul>
+        <button class="nav-button" @click="$router.push('/home')">Home</button>
+        <button class="nav-button" @click="logout">Logout</button>
     </nav>
 </template>
 
@@ -23,6 +21,22 @@ export default {
     display: flex;
     justify-content: space-between;
     padding: 1rem;
-    background-color: #f0f0f0;
+    background-color: #007f4d;
+}
+
+.nav-button {
+    background-color: #fff;
+    color: #007f4d;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.nav-button:hover {
+    background-color: #005934;
+    color: #fff;
 }
 </style>

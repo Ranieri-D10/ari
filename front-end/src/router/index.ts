@@ -1,23 +1,14 @@
 // /front-end/src/router/index.ts
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import Login from '../components/Login.vue';
-import Register from '../components/Register.vue';
-import Home from '../components/Home.vue';
+import Login from '@/views/Login.vue';
+import Register from '@/views/Register.vue';
+import Home from '@/views/Home.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/login',
     name: 'login',
     component: Login,
-    // Evita que usuários autenticados acessem a página de login novamente
-    beforeEnter: (to, from, next) => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        next('/home'); // Redireciona para Home se o usuário já estiver autenticado
-      } else {
-        next(); // Prossegue para o login se não autenticado
-      }
-    },
   },
   {
     path: '/register',
