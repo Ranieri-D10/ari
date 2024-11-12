@@ -38,10 +38,11 @@ router.put('/:id', autenticarToken, UsuarioController.atualizarUsuario);
 // Rota de login (sem autenticação)
 router.post('/login', UsuarioController.login);
 
+// Nova rota para renovar o token
+router.post('/renovar-token', renovarToken);
+
 // Rota de logout (com autenticação)
 router.post('/logout', autenticarToken, logout);
 
-// Nova rota para renovar o token
-router.post('/renovar-token', autenticarToken, renovarToken);
 
 module.exports = router;

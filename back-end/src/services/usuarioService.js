@@ -32,17 +32,12 @@ class UsuarioService {
     });
   }
 
-  async buscarPorEmailOuNome(email, nome) {
-    if (!email && !nome) {
-      throw new Error('Email ou nome devem ser fornecidos para buscar o usuário.');
+  async buscarPorEmail(email) {
+    if (!email) {
+      throw new Error('Email deve ser fornecido para buscar o usuário.');
     }
     return prisma.usuario.findFirst({
-      where: {
-        OR: [
-          email ? { email } : null,
-          nome ? { nome } : null
-        ].filter(Boolean) // Remove entradas nulas
-      }
+      where: { email }
     });
   }
 }
