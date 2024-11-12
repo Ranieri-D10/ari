@@ -18,10 +18,6 @@
         <label for="dt_nascimento">Data de Nascimento:</label>
         <input v-model="formData.dt_nascimento" type="date" id="dt_nascimento" required />
       </div>
-      <div class="form-group inline-group">
-        <label for="status">Ativo:</label>
-        <input v-model="formData.status" type="checkbox" id="status" />
-      </div>
       <div class="button-group">
         <button type="submit" class="register-button">Registrar</button>
         <button type="button" class="login-button" @click="navigateToLogin">Login</button>
@@ -42,7 +38,6 @@ export default {
         email: '',
         senha: '',
         dt_nascimento: '',
-        status: false,
       },
       message: '',
     };

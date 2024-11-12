@@ -15,7 +15,7 @@ class UsuarioService {
         email,
         senha,
         dt_nascimento: new Date(dt_nascimento),
-        status,
+        status: true,
       },
     });
     return novoUsuario;
