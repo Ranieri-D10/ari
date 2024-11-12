@@ -6,21 +6,17 @@ class UsuarioController {
   async criarUsuario(req, res) {
     try {
       const { senha, dt_nascimento, ...resto } = req.body;
-
-      // Criptografando a senha recebida no corpo da requisição
       const senhaCriptografada = await bcrypt.hash(senha, 10);
-
-      // Validação adicional para o campo dt_nascimento
       const nascimentoValido = new Date(dt_nascimento);
+
       if (isNaN(nascimentoValido.getTime())) {
         return res.status(400).json({ error: 'Data de nascimento inválida' });
       }
 
-      // Substituindo a senha original pela criptografada
       const novoUsuario = await UsuarioService.criarUsuario({
         ...resto,
         senha: senhaCriptografada,
-        dt_nascimento: nascimentoValido, // Enviar em formato Date
+        dt_nascimento: nascimentoValido,
       });
 
       res.status(201).json(novoUsuario);
@@ -43,14 +39,12 @@ class UsuarioController {
   async atualizarUsuario(req, res) {
     try {
       const { dt_nascimento, senha, ...resto } = req.body;
-
-      // Atualizar senha se fornecida
       let senhaCriptografada = undefined;
+
       if (senha) {
         senhaCriptografada = await bcrypt.hash(senha, 10);
       }
 
-      // Atualizar data de nascimento se fornecida
       let nascimentoValido = undefined;
       if (dt_nascimento) {
         nascimentoValido = new Date(dt_nascimento);
@@ -76,35 +70,24 @@ class UsuarioController {
     try {
       const { email, nome, senha } = req.body;
 
-      // Verificar se pelo menos email ou nome foram fornecidos
       if (!email && !nome) {
         return res.status(400).json({ message: 'Por favor, forneça um email ou nome.' });
       }
 
-      // Log de dados recebidos
-      console.log("Dados de login recebidos:", { email, nome });
-
-      // Buscando o usuário por email ou nome
       const usuario = await UsuarioService.buscarPorEmailOuNome(email, nome);
       if (!usuario) {
         return res.status(404).json({ message: 'Usuário não encontrado' });
       }
 
-      // Log do usuário encontrado
-      console.log("Usuário encontrado:", usuario);
-
-      // Comparando a senha usando bcrypt
       const senhaValida = await bcrypt.compare(senha, usuario.senha);
       if (!senhaValida) {
         return res.status(401).json({ message: 'Senha inválida' });
       }
 
-      // Gerar e retornar o token JWT
       const token = jwtConfig.generateToken(usuario.id);
-      console.log("Token JWT gerado:", token); // Log para depuração
       res.status(200).json({ token });
     } catch (error) {
-      console.error("Erro ao fazer login:", error.stack || error);
+      console.error("Erro ao fazer login:", error);
       res.status(500).json({ error: 'Erro interno no servidor.' });
     }
   }
@@ -126,8 +109,25 @@ const autenticarToken = (req, res, next) => {
   }
 };
 
+const renovarToken = async (req, res) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return res.sendStatus(401);
+
+  try {
+    const user = jwtConfig.verifyToken(token);
+    const novoToken = jwtConfig.generateToken(user.id);
+    res.status(200).json({ token: novoToken });
+  } catch (error) {
+    console.error("Erro ao renovar token:", error);
+    res.status(403).json({ error: 'Token inválido ou expirado.' });
+  }
+};
+
+
 // Função de logout
-const logout = async (req, res) => {
+const logout = (req, res) => {
   try {
     const token = req.headers['authorization'].split(' ')[1];
     jwtConfig.blacklistToken(token);
@@ -138,4 +138,4 @@ const logout = async (req, res) => {
   }
 };
 
-module.exports = { UsuarioController: new UsuarioController(), autenticarToken };
+module.exports = { UsuarioController: new UsuarioController(), autenticarToken, logout, renovarToken };

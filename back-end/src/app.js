@@ -30,5 +30,6 @@ app.use('/api/prescricoes', prescricaoRoute);
 app.use('/api/usuarios', usuarioRoute);
 app.use('/api/historico', historicoRoute);
 
+
 // Exporta a instância do app para ser usada em outro lugar
 module.exports = app;

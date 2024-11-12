@@ -1,5 +1,5 @@
 const express = require('express');
-const { UsuarioController, autenticarToken } = require('../controllers/usuarioController');
+const { UsuarioController, autenticarToken, logout, renovarToken } = require('../controllers/usuarioController');
 
 const router = express.Router();
 
@@ -18,29 +18,30 @@ const router = express.Router();
  *             properties:
  *               nome:
  *                 type: string
- *                 description: Nome do novo usuário
  *               senha:
  *                 type: string
- *                 description: Senha do novo usuário
  *               dt_nascimento:
  *                 type: string
  *                 format: date
- *                 description: Data de nascimento
  *     responses:
  *       201:
  *         description: Usuário criado com sucesso.
- *       400:
- *         description: Falha ao criar o usuário.
  */
 router.post('/', UsuarioController.criarUsuario);
 
-// Protegido por autenticação
+// Rota protegida para listar usuários
 router.get('/', autenticarToken, UsuarioController.listarUsuarios);
 
-// Protegido por autenticação
+// Rota protegida para atualizar um usuário
 router.put('/:id', autenticarToken, UsuarioController.atualizarUsuario);
 
 // Rota de login (sem autenticação)
 router.post('/login', UsuarioController.login);
+
+// Rota de logout (com autenticação)
+router.post('/logout', autenticarToken, logout);
+
+// Nova rota para renovar o token
+router.post('/renovar-token', autenticarToken, renovarToken);
 
 module.exports = router;

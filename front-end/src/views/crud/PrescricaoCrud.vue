@@ -5,10 +5,6 @@
             <div class="card form-card">
                 <form @submit.prevent="createPrescricao" class="form">
                     <div class="form-group">
-                        <label for="id_usuario">ID do Usuário:</label>
-                        <input v-model="novaPrescricao.id_usuario" id="id_usuario" type="number" required />
-                    </div>
-                    <div class="form-group">
                         <label for="id_remedio">ID do Remédio:</label>
                         <input v-model="novaPrescricao.id_remedio" id="id_remedio" type="number" required />
                     </div>
@@ -57,20 +53,29 @@ export default {
         return {
             prescricoes: [],
             novaPrescricao: {
-                id_usuario: '',
+                id_usuario: '', // Será preenchido automaticamente
                 id_remedio: '',
                 observacao: '',
                 frequencia: '',
                 dt_inicio: '',
                 dt_fim: '',
-                status: true // Definindo o status padrão como true
+                status: true // Status padrão como true
             },
         };
     },
     methods: {
         async fetchPrescricoes() {
             try {
-                const response = await axios.get('http://localhost:3000/api/prescricoes');
+                // Obter o ID do usuário do localStorage
+                const userId = localStorage.getItem('userId');
+
+                if (!userId) {
+                    console.error('Usuário não autenticado');
+                    return;
+                }
+
+                // Requisição para buscar as prescrições do usuário
+                const response = await axios.get(`http://localhost:3000/api/prescricoes/${userId}`);
                 this.prescricoes = response.data;
             } catch (error) {
                 console.error('Erro ao buscar prescrições:', error);
@@ -78,41 +83,48 @@ export default {
         },
         async createPrescricao() {
             try {
-                // Log dos dados que estão sendo enviados
-                console.log('Enviando dados:', this.novaPrescricao);
+                // Obter o ID do usuário do localStorage
+                const userId = localStorage.getItem('userId');
 
-                // Certificar que os campos numéricos estão sendo convertidos corretamente
-                this.novaPrescricao.id_usuario = Number(this.novaPrescricao.id_usuario);
+                if (!userId) {
+                    console.error('Usuário não autenticado');
+                    return;
+                }
+
+                // Atribuir o id_usuario antes de enviar a nova prescrição
+                this.novaPrescricao.id_usuario = Number(userId);
+
+                // Converter campos numéricos e datas
                 this.novaPrescricao.id_remedio = Number(this.novaPrescricao.id_remedio);
                 this.novaPrescricao.frequencia = Number(this.novaPrescricao.frequencia);
-
-                // Certificar que as datas estão no formato correto
                 this.novaPrescricao.dt_inicio = new Date(this.novaPrescricao.dt_inicio).toISOString();
                 this.novaPrescricao.dt_fim = new Date(this.novaPrescricao.dt_fim).toISOString();
 
+                // Enviar requisição para criar a prescrição
                 const response = await axios.post('http://localhost:3000/api/prescricoes', this.novaPrescricao);
 
                 if (response.status === 201) {
-                    console.log('Resposta da API:', response.data); // Log da resposta da API
-                    this.fetchPrescricoes(); // Atualiza a lista de prescrições
-                    this.novaPrescricao = {
-                        id_usuario: '',
-                        id_remedio: '',
-                        observacao: '',
-                        frequencia: '',
-                        dt_inicio: '',
-                        dt_fim: '',
-                        status: true // Resetando o status para true
-                    };
-                    console.log('Nova prescrição resetada:', this.novaPrescricao); // Log do reset do formulário
+                    this.fetchPrescricoes(); // Atualizar lista de prescrições
+                    this.resetForm(); // Resetar formulário
                 } else {
                     console.error('Erro na resposta ao criar prescrição:', response);
                 }
             } catch (error) {
                 console.error('Erro ao criar prescrição:', error);
             }
-        }
-        ,
+        },
+        resetForm() {
+            // Resetar dados da nova prescrição
+            this.novaPrescricao = {
+                id_usuario: '', // Mantido para novo preenchimento
+                id_remedio: '',
+                observacao: '',
+                frequencia: '',
+                dt_inicio: '',
+                dt_fim: '',
+                status: true
+            };
+        },
         confirmDelete(id) {
             if (confirm('Você tem certeza que deseja deletar esta prescrição?')) {
                 this.deletePrescricao(id);
