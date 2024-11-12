@@ -1,3 +1,5 @@
+const PrescricaoService = require('../services/prescricaoService')
+
 class PrescricaoController {
   async criarPrescricao(req, res) {
     try {

@@ -1,33 +1,35 @@
 <template>
     <div class="remedio-crud">
         <h2>Gerenciamento de Remédios</h2>
-        <form @submit.prevent="createRemedio">
-            <div class="form-group">
-                <label for="nome">Nome:</label>
-                <input v-model="novoRemedio.nome" id="nome" required />
+        <div class="container">
+            <div class="card form-card">
+                <form @submit.prevent="createRemedio" class="form">
+                    <div class="form-group">
+                        <label for="nome">Nome:</label>
+                        <input v-model="novoRemedio.nome" id="nome" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="funcao">Função:</label>
+                        <input v-model="novoRemedio.funcao" id="funcao" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="dosagem">Dosagem:</label>
+                        <input v-model="novoRemedio.dosagem" id="dosagem" type="number" step="0.01" required />
+                    </div>
+                    <button type="submit" class="action-button">Adicionar Remédio</button>
+                </form>
             </div>
-            <div class="form-group">
-                <label for="funcao">Função:</label>
-                <input v-model="novoRemedio.funcao" id="funcao" required />
-            </div>
-            <div class="form-group">
-                <label for="dosagem">Dosagem (mg):</label>
-                <input v-model.number="novoRemedio.dosagem" id="dosagem" type="number" />
-            </div>
-            <div class="form-group inline-group">
-                <input v-model="novoRemedio.status" type="checkbox" id="status" />
-                <label for="status">Ativo</label>
-            </div>
-            <button type="submit" class="action-button">Adicionar Remédio</button>
-        </form>
 
-        <h3>Lista de Remédios</h3>
-        <ul>
-            <li v-for="remedio in remedios" :key="remedio.id">
-                {{ remedio.nome }} ({{ remedio.funcao }} - {{ remedio.dosagem }} mg)
-                <button @click="deleteRemedio(remedio.id)" class="delete-button">Deletar</button>
-            </li>
-        </ul>
+            <div class="card list-card">
+                <h3>Lista de Remédios</h3>
+                <ul>
+                    <li v-for="remedio in remedios" :key="remedio.id">
+                        {{ remedio.nome }} - {{ remedio.funcao }} ({{ remedio.dosagem }}mg)
+                        <button @click="confirmDelete(remedio.id)" class="delete-button">Deletar</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -41,8 +43,7 @@ export default {
             novoRemedio: {
                 nome: '',
                 funcao: '',
-                dosagem: null,
-                status: false,
+                dosagem: '',
             },
         };
     },
@@ -62,11 +63,15 @@ export default {
                 this.novoRemedio = {
                     nome: '',
                     funcao: '',
-                    dosagem: null,
-                    status: false,
+                    dosagem: '',
                 };
             } catch (error) {
                 console.error('Erro ao criar remédio:', error);
+            }
+        },
+        confirmDelete(id) {
+            if (confirm('Você tem certeza que deseja deletar este remédio?')) {
+                this.deleteRemedio(id);
             }
         },
         async deleteRemedio(id) {
@@ -86,12 +91,32 @@ export default {
 
 <style scoped>
 .remedio-crud {
-    max-width: 600px;
+    width: 80%;
     margin: auto;
     padding: 2rem;
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.card {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-card {
+    width: 45%;
+}
+
+.list-card {
+    width: 50%;
 }
 
 .form-group {
@@ -104,25 +129,12 @@ label {
     color: #333;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="date"],
-input[type="number"] {
+input {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-}
-
-.inline-group {
-    display: flex;
-    align-items: center;
-}
-
-.inline-group input[type="checkbox"] {
-    margin-right: 5px;
 }
 
 .action-button {

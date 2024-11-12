@@ -12,7 +12,7 @@ class RemedioService {
         nome,
         funcao,
         dosagem: parseFloat(dosagem), // Converter dosagem para float
-        status
+        status: true
       },
     });
     return novoRemedio;

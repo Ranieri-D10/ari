@@ -3,8 +3,14 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Login from '@/views/Login.vue';
 import Register from '@/views/Register.vue';
 import Home from '@/views/Home.vue';
+import RemedioCrud from '@/views/crud/RemedioCrud.vue';
+import PrescricaoCrud from '@/views/crud/PrescricaoCrud.vue';
 
 const routes: Array<RouteRecordRaw> = [
+  {
+    path: '/',
+    redirect: '/login', // Redireciona para login por padrão
+  },
   {
     path: '/login',
     name: 'login',
@@ -22,9 +28,15 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: true }, // Indica que a rota é protegida
   },
   {
-    path: '/',
-    redirect: '/login', // Redireciona para login por padrão
+    path: '/remedios',
+    name: 'remedios',
+    component: RemedioCrud,
   },
+  {
+    path: '/prescricoes',
+    name: 'prescricoes',
+    component: PrescricaoCrud,
+  }
 ];
 
 const router = createRouter({

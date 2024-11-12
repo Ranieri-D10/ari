@@ -23,7 +23,7 @@ model Prescricao {
   id_remedio  Int
   
   observacao  String?
-  frequencia  DateTime
+  frequencia  Int
   dt_inicio   DateTime
   dt_fim      DateTime
   status      Boolean
