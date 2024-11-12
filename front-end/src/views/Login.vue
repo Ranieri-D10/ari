@@ -3,8 +3,8 @@
     <h2>Login</h2>
     <form @submit.prevent="login">
       <div class="form-group">
-        <label for="emailOrName">Email ou Nome:</label>
-        <input v-model="credentials.emailOrName" id="emailOrName" required />
+        <label for="email">Email:</label>
+        <input v-model="credentials.email" id="email" required />
       </div>
       <div class="form-group">
         <label for="password">Senha:</label>
@@ -24,7 +24,7 @@ export default {
   data() {
     return {
       credentials: {
-        emailOrName: '', // Pode ser email ou nome
+        email: '', // Agora apenas o email é usado
         password: '',
       },
       message: '',
@@ -34,8 +34,7 @@ export default {
     async login() {
       try {
         const response = await axios.post('http://localhost:3000/api/usuarios/login', {
-          email: this.credentials.emailOrName,
-          nome: this.credentials.emailOrName, // Enviar como ambos para back-end tratar
+          email: this.credentials.email, // Enviar apenas o email
           senha: this.credentials.password,
         });
 

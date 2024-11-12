@@ -66,16 +66,17 @@ export default {
     methods: {
         async fetchPrescricoes() {
             try {
-                // Obter o ID do usuário do localStorage
+                const token = localStorage.getItem('token');
                 const userId = localStorage.getItem('userId');
 
-                if (!userId) {
+                if (!userId || !token) {
                     console.error('Usuário não autenticado');
                     return;
                 }
 
-                // Requisição para buscar as prescrições do usuário
-                const response = await axios.get(`http://localhost:3000/api/prescricoes/${userId}`);
+                const response = await axios.get(`http://localhost:3000/api/prescricoes/${userId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
                 this.prescricoes = response.data;
             } catch (error) {
                 console.error('Erro ao buscar prescrições:', error);
@@ -83,10 +84,10 @@ export default {
         },
         async createPrescricao() {
             try {
-                // Obter o ID do usuário do localStorage
+                const token = localStorage.getItem('token');
                 const userId = localStorage.getItem('userId');
 
-                if (!userId) {
+                if (!userId || !token) {
                     console.error('Usuário não autenticado');
                     return;
                 }
@@ -100,8 +101,10 @@ export default {
                 this.novaPrescricao.dt_inicio = new Date(this.novaPrescricao.dt_inicio).toISOString();
                 this.novaPrescricao.dt_fim = new Date(this.novaPrescricao.dt_fim).toISOString();
 
-                // Enviar requisição para criar a prescrição
-                const response = await axios.post('http://localhost:3000/api/prescricoes', this.novaPrescricao);
+                // Enviar requisição para criar a prescrição com o token de autenticação
+                const response = await axios.post('http://localhost:3000/api/prescricoes', this.novaPrescricao, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
 
                 if (response.status === 201) {
                     this.fetchPrescricoes(); // Atualizar lista de prescrições

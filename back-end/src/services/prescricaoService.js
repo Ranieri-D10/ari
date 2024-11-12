@@ -24,8 +24,12 @@ class PrescricaoService {
 
   async listarPrescricoes(id_usuario) {
     return await prisma.prescricao.findMany({
-      where: { id_usuario: Number(id_usuario) },
-      include: { remedio: true },
+      where: {
+        id_usuario: id_usuario, // Certifique-se de que `id_usuario` é um número
+      },
+      include: {
+        remedio: true, // Inclui as informações do remédio associado
+      },
     });
   }
 

@@ -1,5 +1,6 @@
 const express = require('express');
 const PrescricaoController = require('../controllers/prescricaoController');
+const authenticateToken = require('../middlewares/authMiddleware'); // Importa o middleware de autenticação
 
 const router = express.Router();
 
@@ -15,7 +16,8 @@ const router = express.Router();
  *       400:
  *         description: Erro ao criar prescrição.
  */
-router.post('/', PrescricaoController.criarPrescricao);
+// Adiciona o middleware de autenticação antes do controlador
+router.post('/', authenticateToken, PrescricaoController.criarPrescricao);
 
 /**
  * @swagger
@@ -32,7 +34,8 @@ router.post('/', PrescricaoController.criarPrescricao);
  *       200:
  *         description: Lista de prescrições retornada.
  */
-router.get('/:id_usuario', PrescricaoController.listarPrescricoes);
+// Middleware aplicado também aqui
+router.get('/:id_usuario', authenticateToken, PrescricaoController.listarPrescricoes);
 
 /**
  * @swagger
@@ -51,6 +54,7 @@ router.get('/:id_usuario', PrescricaoController.listarPrescricoes);
  *       400:
  *         description: Erro ao deletar prescrição.
  */
-router.delete('/:id', PrescricaoController.deletarPrescricao);
+// Middleware aqui também, se necessário.
+router.delete('/:id', authenticateToken, PrescricaoController.deletarPrescricao);
 
 module.exports = router;

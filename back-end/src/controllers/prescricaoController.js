@@ -1,10 +1,15 @@
 const PrescricaoService = require('../services/prescricaoService')
 
 class PrescricaoController {
+
   async criarPrescricao(req, res) {
     try {
-      const novaPrescricao = await PrescricaoService.criarPrescricao(req.body);
-      res.status(201).json(novaPrescricao);
+      // Adiciona o userId do token ao objeto de dados
+      const novaPrescricao = await PrescricaoService.criarPrescricao({
+        ...req.body,
+        id_usuario: req.userId, // Insere o ID do usuário autenticado
+      });
+      res.status(201).json(novaPrescricao); // Retorna a nova prescrição criada
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
@@ -12,7 +17,8 @@ class PrescricaoController {
 
   async listarPrescricoes(req, res) {
     try {
-      const prescricoes = await PrescricaoService.listarPrescricoes(req.params.id_usuario);
+      const id_usuario = parseInt(req.params.id_usuario, 10); // Garante que é um número
+      const prescricoes = await PrescricaoService.listarPrescricoes(id_usuario);
       res.status(200).json(prescricoes);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -27,6 +33,8 @@ class PrescricaoController {
       res.status(400).json({ error: error.message });
     }
   }
+
+
 
   async deletarPrescricao(req, res) {
     try {
