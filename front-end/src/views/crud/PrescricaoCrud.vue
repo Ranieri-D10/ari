@@ -5,8 +5,13 @@
             <div class="card form-card">
                 <form @submit.prevent="createPrescricao" class="form">
                     <div class="form-group">
-                        <label for="id_remedio">ID do Remédio:</label>
-                        <input v-model="novaPrescricao.id_remedio" id="id_remedio" type="number" required />
+                        <label for="id_remedio">Remédio:</label>
+                        <select v-model="novaPrescricao.id_remedio" id="id_remedio" required>
+                            <option value="" disabled>Selecione um remédio</option>
+                            <option v-for="remedio in remedios" :key="remedio.id" :value="remedio.id">
+                                {{ remedio.nome }}
+                            </option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="observacao">Observação:</label>
@@ -52,6 +57,7 @@ export default {
     data() {
         return {
             prescricoes: [],
+            remedios: [],
             novaPrescricao: {
                 id_usuario: '', // Será preenchido automaticamente
                 id_remedio: '',
@@ -80,6 +86,21 @@ export default {
                 this.prescricoes = response.data;
             } catch (error) {
                 console.error('Erro ao buscar prescrições:', error);
+            }
+        },
+        async fetchRemedios() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    console.error('Usuário não autenticado');
+                    return;
+                }
+                const response = await axios.get('http://localhost:3000/api/remedios', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                this.remedios = response.data;  // Preenche a lista de remédios
+            } catch (error) {
+                console.error('Erro ao buscar remédios:', error);
             }
         },
         async createPrescricao() {
@@ -152,6 +173,7 @@ export default {
     },
     mounted() {
         this.fetchPrescricoes();
+        this.fetchRemedios();
     },
 };
 </script>
@@ -246,5 +268,27 @@ li {
     justify-content: space-between;
     align-items: flex-start;
     flex-direction: column;
+}
+
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s, background-color 0.3s;
+    cursor: pointer;
+}
+
+select:focus {
+    border-color: #007f4d;
+    background-color: #f1f1f1;
+}
+
+option {
+    padding: 10px;
+    font-size: 1rem;
 }
 </style>

@@ -85,7 +85,7 @@ class UsuarioController {
       }
 
       const token = jwt.sign({ id: usuario.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      res.status(200).json({ token });
+      res.status(200).json({ token, userId: usuario.id });
     } catch (error) {
       console.error('Erro no login:', error);
       res.status(500).json({ error: 'Erro interno no servidor.' });

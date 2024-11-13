@@ -40,6 +40,7 @@ export default {
 
         // Armazenar o token JWT no localStorage
         localStorage.setItem('token', response.data.token);
+        localStorage.setItem('userId', response.data.userId);
         this.message = 'Login realizado com sucesso!';
 
         // Redireciona para a página Home após login
