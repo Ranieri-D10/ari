@@ -50,7 +50,15 @@ export default {
     methods: {
         async fetchRemedios() {
             try {
-                const response = await axios.get('http://localhost:3000/api/remedios');
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    console.error('Token de autenticação não encontrado');
+                    return;
+                }
+
+                const response = await axios.get('http://localhost:3000/api/remedios', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
                 this.remedios = response.data;
             } catch (error) {
                 console.error('Erro ao buscar remédios:', error);
@@ -58,7 +66,17 @@ export default {
         },
         async createRemedio() {
             try {
-                await axios.post('http://localhost:3000/api/remedios', this.novoRemedio);
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    console.error('Token de autenticação não encontrado');
+                    return;
+                }
+
+                await axios.post(
+                    'http://localhost:3000/api/remedios',
+                    this.novoRemedio,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
                 this.fetchRemedios();
                 this.novoRemedio = {
                     nome: '',
@@ -76,7 +94,15 @@ export default {
         },
         async deleteRemedio(id) {
             try {
-                await axios.delete(`http://localhost:3000/api/remedios/${id}`);
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    console.error('Token de autenticação não encontrado');
+                    return;
+                }
+
+                await axios.delete(`http://localhost:3000/api/remedios/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
                 this.fetchRemedios();
             } catch (error) {
                 console.error('Erro ao deletar remédio:', error);

@@ -135,7 +135,15 @@ export default {
         },
         async deletePrescricao(id) {
             try {
-                await axios.delete(`http://localhost:3000/api/prescricoes/${id}`);
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    console.error('Token de autenticação não encontrado');
+                    return;
+                }
+
+                await axios.delete(`http://localhost:3000/api/prescricoes/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
                 this.fetchPrescricoes();
             } catch (error) {
                 console.error('Erro ao deletar prescrição:', error);

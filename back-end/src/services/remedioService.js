@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 class RemedioService {
   async criarRemedio(dadosRemedio) {
-    const { nome, funcao, dosagem, status } = dadosRemedio;
+    const { nome, funcao, dosagem } = dadosRemedio;
     if (!nome || !funcao) {
       throw new Error('Nome e função do remédio são obrigatórios');
     }

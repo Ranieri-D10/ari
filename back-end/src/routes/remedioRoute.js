@@ -1,5 +1,6 @@
 const express = require('express');
 const RemedioController = require('../controllers/remedioController');
+const authenticateToken = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ const router = express.Router();
  *       400:
  *         description: Erro ao criar remédio.
  */
-router.post('/', RemedioController.criarRemedio);
+router.post('/', authenticateToken, RemedioController.criarRemedio);
 
 /**
  * @swagger
@@ -26,7 +27,7 @@ router.post('/', RemedioController.criarRemedio);
  *       200:
  *         description: Lista de remédios retornada.
  */
-router.get('/', RemedioController.listarRemedios);
+router.get('/', authenticateToken, RemedioController.listarRemedios);
 
 /**
  * @swagger
@@ -45,7 +46,7 @@ router.get('/', RemedioController.listarRemedios);
  *       400:
  *         description: Erro ao atualizar remédio.
  */
-router.put('/:id', RemedioController.atualizarRemedio);
+router.put('/:id', authenticateToken, RemedioController.atualizarRemedio);
 
 /**
  * @swagger
@@ -64,6 +65,6 @@ router.put('/:id', RemedioController.atualizarRemedio);
  *       400:
  *         description: Erro ao deletar remédio.
  */
-router.delete('/:id', RemedioController.deletarRemedio);
+router.delete('/:id', authenticateToken, RemedioController.deletarRemedio);
 
 module.exports = router;
