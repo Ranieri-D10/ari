@@ -1,31 +1,35 @@
 <template>
     <div class="home">
-        <!-- Header centralizado com estilo moderno -->
         <header class="header">
-            <h1>Agenda de Remédios</h1>
+            <h1>Agenda de Remédios - Ari</h1>
         </header>
 
-        <!-- Seção de Agendamentos -->
-        <section class="agendamentos">
-            <h2>Agendamentos Feitos</h2>
-            <ul>
-                <li v-for="agendamento in agendamentos" :key="agendamento.id">
-                    {{ agendamento.nome }} - {{ agendamento.horario }}
-                </li>
-            </ul>
-        </section>
+        <div class="container">
+            <!-- Contêiner para o calendário -->
+            <div class="calendario-container">
+                <CalendarioSimples :agendamentos="agendamentos" />
+            </div>
 
-        <!-- Botões para acessar CRUDs -->
-        <section class="crud-links">
-            <h3>Funcionalidades</h3>
-            <button @click="navigateTo('remedios')" class="crud-button">Gerenciar Remédios</button>
-            <button @click="navigateTo('prescricoes')" class="crud-button">Gerenciar Prescrições</button>
-        </section>
+            <!-- Contêiner para as funcionalidades -->
+            <div class="funcionalidades-container">
+                <section class="funcionalidades">
+                    <h3>Funcionalidades</h3>
+                    <button @click="navigateTo('remedios')" class="crud-button">Gerenciar Remédios</button>
+                    <button @click="navigateTo('prescricoes')" class="crud-button">Gerenciar Prescrições</button>
+                    <button @click="navigateTo('historico')" class="crud-button">Histórico de Prescrições</button>
+                </section>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
+import CalendarioSimples from '../components/CalendarioSimples.vue';
+
 export default {
+    components: {
+        CalendarioSimples
+    },
     data() {
         return {
             agendamentos: [
@@ -40,18 +44,17 @@ export default {
         navigateTo(view) {
             this.$router.push(`/${view}`);
         },
-    },
+    }
 };
 </script>
 
 <style scoped>
 .home {
-    max-width: 800px;
+    width: 80%;
     margin: auto;
     padding: 2rem;
-    background-color: #f5f5f5;
+    background-color: white;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .header {
@@ -60,31 +63,57 @@ export default {
     margin-bottom: 2rem;
 }
 
-.agendamentos,
-.crud-links {
-    margin-bottom: 2rem;
+.container {
+    display: flex;
+    gap: 1.5rem;
 }
 
-h2,
-h3 {
-    text-align: center;
-    color: #333;
+/* Contêineres para o calendário e funcionalidades com tamanhos específicos */
+.calendario-container {
+    flex: 8;
+    /* 80% */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-ul {
-    list-style-type: none;
-    padding: 0;
+.funcionalidades-container {
+    flex: 4;
+    /* 40% */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-li {
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
+.calendario-simples {
+    width: 100%;
+    padding: 1.5rem;
+    background-color: #f0f8ff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 250px;
+}
+
+.funcionalidades {
+    width: 100%;
+    padding: 1rem;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+    min-height: 100px;
 }
 
 .crud-button {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
+    width: 90%;
+    padding: 0.75rem;
     background-color: #007f4d;
     color: white;
     border: none;
@@ -92,6 +121,7 @@ li {
     cursor: pointer;
     font-size: 1rem;
     transition: background-color 0.3s;
+    text-align: center;
 }
 
 .crud-button:hover {

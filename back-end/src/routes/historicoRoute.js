@@ -1,5 +1,6 @@
 const express = require('express');
 const HistoricoController = require('../controllers/historicoController');
+const authenticateToken = require('../middlewares/authMiddleware')
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ const router = express.Router();
  *       400:
  *         description: Erro ao criar histórico.
  */
-router.post('/', HistoricoController.registrarHistorico);
+router.post('/', authenticateToken, HistoricoController.registrarHistorico);
 
 /**
  * @swagger
@@ -32,6 +33,6 @@ router.post('/', HistoricoController.registrarHistorico);
  *       200:
  *         description: Lista de histórico retornada.
  */
-router.get('/:id_usuario', HistoricoController.listarHistorico);
+router.get('/:id_usuario', authenticateToken, HistoricoController.listarHistorico);
 
 module.exports = router;

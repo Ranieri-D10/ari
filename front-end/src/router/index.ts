@@ -5,6 +5,7 @@ import Register from '@/views/Register.vue';
 import Home from '@/views/Home.vue';
 import RemedioCrud from '@/views/crud/RemedioCrud.vue';
 import PrescricaoCrud from '@/views/crud/PrescricaoCrud.vue';
+import HistoricoCrud from '@/views/crud/HistoricoCrud.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -36,6 +37,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/prescricoes',
     name: 'prescricoes',
     component: PrescricaoCrud,
+  },
+  {
+    path: '/historico',
+    name: 'historico',
+    component: HistoricoCrud,
   }
 ];
 
