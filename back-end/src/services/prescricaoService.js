@@ -4,21 +4,32 @@ const prisma = new PrismaClient();
 class PrescricaoService {
   async criarPrescricao(dadosPrescricao) {
     const { id_usuario, id_remedio, frequencia, dt_inicio, dt_fim, observacao } = dadosPrescricao;
+
+    // Ajustar as datas para garantir que sejam armazenadas corretamente
+    const dataInicio = new Date(dt_inicio);
+    const dataFim = new Date(dt_fim);
+
+    // Ajustar as horas para 00:00:00 no UTC
+    dataInicio.setUTCHours(0, 0, 0, 0);
+    dataFim.setUTCHours(0, 0, 0, 0);
+
     const remedio = await prisma.remedio.findUnique({ where: { id: id_remedio } });
     if (!remedio || !remedio.status) {
       throw new Error('Remédio não encontrado ou inativo.');
     }
+
     const novaPrescricao = await prisma.prescricao.create({
       data: {
         id_usuario,
         id_remedio,
         frequencia,
-        dt_inicio,
-        dt_fim,
+        dt_inicio: dataInicio.toISOString(), // Armazenar como ISO
+        dt_fim: dataFim.toISOString(),       // Armazenar como ISO
         observacao,
         status: true,
       },
     });
+
     return novaPrescricao;
   }
 
@@ -46,6 +57,5 @@ class PrescricaoService {
     });
   }
 }
-
 
 module.exports = new PrescricaoService();

@@ -9,7 +9,12 @@ class HistoricoService {
       throw new Error('Prescrição não encontrada.');
     }
     const novoHistorico = await prisma.historico.create({
-      data: { id_prescricao, dt_atual, status },
+      data:
+      {
+        id_prescricao,
+        dt_atual,
+        status: 1
+      },
     });
     return novoHistorico;
   }

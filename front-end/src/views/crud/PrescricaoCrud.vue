@@ -37,11 +37,11 @@
                 <h3>Lista de Prescrições</h3>
                 <ul>
                     <li v-for="prescricao in prescricoes" :key="prescricao.id">
-                        Usuário ID: {{ prescricao.id_usuario }} - Remédio ID: {{ prescricao.id_remedio }}<br>
+                        Remédio: {{ prescricao.remedio.nome }}<br>
                         Observação: {{ prescricao.observacao }}<br>
                         Frequência: {{ prescricao.frequencia }}x/dia<br>
-                        Início: {{ new Date(prescricao.dt_inicio).toLocaleDateString() }}<br>
-                        Fim: {{ new Date(prescricao.dt_fim).toLocaleDateString() }}<br>
+                        Início: {{ new Date(prescricao.dt_inicio).toLocaleDateString("pt-BR") }}<br>
+                        Fim: {{ new Date(prescricao.dt_fim).toLocaleDateString("pt-BR") }}<br>
                         <button @click="confirmDelete(prescricao.id)" class="delete-button">Deletar</button>
                     </li>
                 </ul>
@@ -80,10 +80,24 @@ export default {
                     return;
                 }
 
+                // Busca prescrições com o id_usuario do usuário autenticado
                 const response = await axios.get(`http://localhost:3000/api/prescricoes/${userId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                this.prescricoes = response.data;
+
+                // Verifica se cada prescrição possui o objeto 'remedio' com nome, caso contrário, busca o objeto completo.
+                this.prescricoes = await Promise.all(response.data.map(async (prescricao) => {
+                    if (!prescricao.remedio || !prescricao.remedio.nome) {
+                        // Faz a busca do remédio pelo id_remedio da prescrição
+                        const remedioResponse = await axios.get(`http://localhost:3000/api/remedios/${prescricao.id_remedio}`, {
+                            headers: { Authorization: `Bearer ${token}` }
+                        });
+                        // Associa o objeto remedio à prescrição
+                        prescricao.remedio = remedioResponse.data;
+                    }
+                    return prescricao;
+                }));
+
             } catch (error) {
                 console.error('Erro ao buscar prescrições:', error);
             }
@@ -116,27 +130,51 @@ export default {
                 // Atribuir o id_usuario antes de enviar a nova prescrição
                 this.novaPrescricao.id_usuario = Number(userId);
 
-                // Converter campos numéricos e datas
+                // Converter campos numéricos
                 this.novaPrescricao.id_remedio = Number(this.novaPrescricao.id_remedio);
                 this.novaPrescricao.frequencia = Number(this.novaPrescricao.frequencia);
-                this.novaPrescricao.dt_inicio = new Date(this.novaPrescricao.dt_inicio).toISOString();
-                this.novaPrescricao.dt_fim = new Date(this.novaPrescricao.dt_fim).toISOString();
 
-                // Enviar requisição para criar a prescrição com o token de autenticação
-                const response = await axios.post('http://localhost:3000/api/prescricoes', this.novaPrescricao, {
+                // Ajuste das datas para evitar problemas de fuso horário
+                const dtInicio = new Date(this.novaPrescricao.dt_inicio);
+                const dtFim = new Date(this.novaPrescricao.dt_fim);
+
+                // Definir a data manualmente em UTC para evitar alterações indesejadas
+                this.novaPrescricao.dt_inicio = new Date(Date.UTC(dtInicio.getFullYear(), dtInicio.getMonth(), dtInicio.getDate())).toISOString();
+                this.novaPrescricao.dt_fim = new Date(Date.UTC(dtFim.getFullYear(), dtFim.getMonth(), dtFim.getDate())).toISOString();
+
+                // Criar prescrição
+                const responsePrescricao = await axios.post('http://localhost:3000/api/prescricoes', this.novaPrescricao, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
-                if (response.status === 201) {
-                    this.fetchPrescricoes(); // Atualizar lista de prescrições
-                    this.resetForm(); // Resetar formulário
+                if (responsePrescricao.status === 201) {
+                    const novaPrescricao = responsePrescricao.data;
+                    const historicoData = {
+                        id_prescricao: novaPrescricao.id,
+                        dt_atual: new Date().toISOString(),
+                        status: 1
+                    };
+
+                    const responseHistorico = await axios.post('http://localhost:3000/api/historico', historicoData, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+
+                    if (responseHistorico.status === 201) {
+                        console.log('Histórico criado com sucesso');
+                    } else {
+                        console.error('Erro ao criar histórico:', responseHistorico);
+                    }
+
+                    this.fetchPrescricoes();
+                    this.resetForm();
                 } else {
-                    console.error('Erro na resposta ao criar prescrição:', response);
+                    console.error('Erro na resposta ao criar prescrição:', responsePrescricao);
                 }
             } catch (error) {
-                console.error('Erro ao criar prescrição:', error);
+                console.error('Erro ao criar prescrição e histórico:', error);
             }
-        },
+        }
+        ,
         resetForm() {
             // Resetar dados da nova prescrição
             this.novaPrescricao = {

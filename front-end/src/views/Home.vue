@@ -1,16 +1,14 @@
 <template>
     <div class="home">
         <header class="header">
-            <h1>Agenda de Remédios - Ari</h1>
+            <h2>Agenda de Remédios</h2>
         </header>
 
         <div class="container">
-            <!-- Contêiner para o calendário -->
             <div class="calendario-container">
-                <CalendarioSimples :agendamentos="agendamentos" />
+                <CalendarioSimples :prescricoes="prescricoes" />
             </div>
 
-            <!-- Contêiner para as funcionalidades -->
             <div class="funcionalidades-container">
                 <section class="funcionalidades">
                     <h3>Funcionalidades</h3>
@@ -25,6 +23,7 @@
 
 <script>
 import CalendarioSimples from '../components/CalendarioSimples.vue';
+import axios from 'axios';
 
 export default {
     components: {
@@ -32,46 +31,62 @@ export default {
     },
     data() {
         return {
-            agendamentos: [
-                { id: 1, nome: 'Paracetamol', horario: '08:00 - 1 vez ao dia' },
-                { id: 2, nome: 'Ibuprofeno', horario: '12:00 - 2 vezes ao dia' },
-                { id: 3, nome: 'Aspirina', horario: '18:00 - 1 vez ao dia' },
-                // Adicione mais agendamentos conforme necessário
-            ],
+            prescricoes: []
         };
     },
     methods: {
         navigateTo(view) {
             this.$router.push(`/${view}`);
         },
+        async fetchPrescricoes() {
+            try {
+                const token = localStorage.getItem('token');
+                const userId = localStorage.getItem('userId');
+
+                if (!userId || !token) {
+                    console.error('Usuário não autenticado');
+                    return;
+                }
+
+                const response = await axios.get(`http://localhost:3000/api/prescricoes/${userId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                this.prescricoes = response.data;
+            } catch (error) {
+                console.error('Erro ao buscar prescrições:', error);
+            }
+        }
+    },
+    mounted() {
+        this.fetchPrescricoes();
     }
 };
 </script>
 
 <style scoped>
 .home {
-    width: 80%;
+    max-width: 100%;
     margin: auto;
     padding: 2rem;
-    background-color: white;
-    border-radius: 8px;
+    background-color: #ffffff;
+    border-radius: 12px;
 }
 
 .header {
     text-align: center;
     color: #007f4d;
-    margin-bottom: 2rem;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .container {
     display: flex;
+    flex-direction: row;
     gap: 1.5rem;
 }
 
-/* Contêineres para o calendário e funcionalidades com tamanhos específicos */
 .calendario-container {
-    flex: 8;
-    /* 80% */
+    flex: 12;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -79,49 +94,35 @@ export default {
 
 .funcionalidades-container {
     flex: 4;
-    /* 40% */
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-.calendario-simples {
-    width: 100%;
-    padding: 1.5rem;
-    background-color: #f0f8ff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 250px;
 }
 
 .funcionalidades {
     width: 100%;
-    padding: 1rem;
-    background-color: #f8f8f8;
+    padding: 1.5rem;
+    background-color: #f9fafc;
     border: 1px solid #ddd;
     border-radius: 8px;
+    text-align: center;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 1rem;
     align-items: center;
-    min-height: 100px;
 }
 
 .crud-button {
-    width: 90%;
+    width: 80%;
+    height: 70%;
     padding: 0.75rem;
     background-color: #007f4d;
     color: white;
     border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    border-radius: 8px;
     font-size: 1rem;
+    cursor: pointer;
     transition: background-color 0.3s;
-    text-align: center;
 }
 
 .crud-button:hover {

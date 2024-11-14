@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql" // Definido como MySQL
-  url      = env("DATABASE_URL") // Use a variável de ambiente para o URL de conexão
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model Usuario {
@@ -13,8 +13,8 @@ model Usuario {
   senha         String
   dt_nascimento DateTime
   status        Boolean
-  email         String   @unique
-  prescricoes   Prescricao[]  // Relacionamento com Prescricao
+  email         String       @unique
+  prescricoes   Prescricao[] // Relacionamento com Prescricao
 }
 
 model Prescricao {
@@ -27,8 +27,8 @@ model Prescricao {
   dt_inicio   DateTime
   dt_fim      DateTime
   status      Boolean
-  usuario     Usuario      @relation(fields: [id_usuario], references: [id]) // Relacionamento com usuario
-  remedio     Remedio      @relation(fields: [id_remedio], references: [id]) // Relacionamento com remedio
+  usuario     Usuario      @relation(fields: [id_usuario], references: [id], onDelete: Cascade) // Excluir prescrições ao deletar usuário
+  remedio     Remedio      @relation(fields: [id_remedio], references: [id], onDelete: Cascade) // Excluir prescrições ao deletar remédio
   historicos  Historico[]  // Relacionamento com historico
 }
 
@@ -46,5 +46,5 @@ model Historico {
   id_prescricao Int
   dt_atual      DateTime
   status        Int
-  prescricao    Prescricao @relation(fields: [id_prescricao], references: [id]) // Relacionamento com prescricao
+  prescricao    Prescricao @relation(fields: [id_prescricao], references: [id], onDelete: Cascade) // Excluir históricos ao deletar prescrição
 }

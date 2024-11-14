@@ -4,12 +4,13 @@ class PrescricaoController {
 
   async criarPrescricao(req, res) {
     try {
-      // Adiciona o userId do token ao objeto de dados
+      console.log('Dados recebidos:', req.body); // Log para verificar os dados recebidos
+
       const novaPrescricao = await PrescricaoService.criarPrescricao({
         ...req.body,
-        id_usuario: req.userId, // Insere o ID do usuário autenticado
+        id_usuario: req.userId,
       });
-      res.status(201).json(novaPrescricao); // Retorna a nova prescrição criada
+      res.status(201).json(novaPrescricao);
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
